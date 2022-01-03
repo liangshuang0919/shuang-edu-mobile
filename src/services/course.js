@@ -9,3 +9,12 @@ export const getAllAds = (params) => {
     params
   })
 }
+
+// 2、分页查询课程信息接口
+export const getQueryCourses = (data) => {
+  return request({
+    method: 'POST',
+    url: '/boss/course/getQueryCourses',
+    data: data
+  })
+}

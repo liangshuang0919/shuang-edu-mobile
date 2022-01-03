@@ -27,9 +27,7 @@ export default {
     LayoutFooter // 全局底部导航组件
   },
   data () {
-    return {
-
-    }
+    return {}
   }
 }
 </script>

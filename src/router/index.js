@@ -1,5 +1,6 @@
 import Vue from 'vue' // 导入 vue 对象
 import VueRouter from 'vue-router' // 导入 vue-router 类
+import store from '@/store' // 导入
 
 Vue.use(VueRouter) // 挂载
 
@@ -41,7 +42,8 @@ const routes = [
     name: 'Learn',
     component: Learn,
     meta: {
-      title: 'Shuang-学习中心'
+      title: 'Shuang-学习中心',
+      requiesAuth: true // 进行登录校验
     }
   },
   // 用户页面路由
@@ -50,7 +52,8 @@ const routes = [
     name: 'User',
     component: User,
     meta: {
-      title: 'Shuang-用户中心'
+      title: 'Shuang-用户中心',
+      requiesAuth: true // 进行登录校验
     }
   },
   // 错误页面路由
@@ -67,6 +70,34 @@ const routes = [
 // 实例化路由对象
 const router = new VueRouter({
   routes
+})
+
+// 设置路由守卫，进行登录检测与跳转
+router.beforeEach((to, from, next) => {
+  // 设置页面标题
+  if (to.meta.title) {
+    document.title = to.meta.title
+  }
+
+  // 判断目标路由是否需要校验跳转
+  if (to.matched.some((record) => record.meta.requiesAuth)) {
+    // 验证 vuex 是否存储了用户登录信息
+    // 如果未登录
+    if (!store.state.user) {
+      // 跳转到登录页面
+      return next({
+        name: 'Login',
+        // 对前一个页面地址进行保存，为了登录的时候可以跳转到原本想去到的页面
+        query: {
+          redirect: to.fullPath
+        }
+      })
+    }
+    // 已经登录过，正常跳转
+    next()
+  } else {
+    next()
+  }
 })
 
 export default router // 导出路由
